@@ -5,7 +5,11 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm i --only=development
+RUN npm i --only=development && npm rebuild bcrypt --build-from-source
+
+# RUN apk --no-cache add --virtual native-deps \
+#   g++ gcc libgcc libstdc++ linux-headers autoconf automake make nasm python git && \
+#   npm install --quiet node-gyp -g
 
 # RUN apk add --no-cache make gcc g++ python && \
 #   npm install && \
@@ -26,7 +30,9 @@ ENV NODE_ENV=${NODE_ENV}
 
 COPY package*.json ./
 
-RUN npm install --only=production
+# RUN npm install --only=production
+
+RUN npm i --only=production && npm rebuild bcrypt --build-from-source
 # RUN apk add --no-cache make gcc g++ python && \
 #   npm install && \
 #   npm rebuild bcrypt --build-from-source && \
