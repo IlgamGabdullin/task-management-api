@@ -4,10 +4,12 @@ import { CreateTaskDTO } from "./dto/create-task.dto";
 import { TaskStatus } from "./task-status.enum";
 import { GetTasksFilterDTO } from "./dto/get-task-filter.dto";
 import { UserEntity } from "src/auth/user.entity";
+import { Logger, InternalServerErrorException } from "@nestjs/common";
 
 
 @EntityRepository(TaskEntity)
 export class TaskRepository extends Repository<TaskEntity> {
+  private logger = new Logger('TaskRepository');
 
   async getTasks(filterDto: GetTasksFilterDTO, user: UserEntity): Promise<TaskEntity[]> {
     const { status, search } = filterDto;
@@ -23,9 +25,13 @@ export class TaskRepository extends Repository<TaskEntity> {
       query.andWhere('(task.title LIKE :search or task.description LIKE :search)', { search: `%${search}%` });
     }
 
-    const tasks = await query.getMany();
-
-    return tasks
+    try {
+      const tasks = await query.getMany();
+      return tasks;
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(error)
+    }
   }
 
   async createTask(createTaskDto: CreateTaskDTO, user: UserEntity): Promise<TaskEntity> {
