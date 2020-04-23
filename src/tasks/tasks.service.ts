@@ -37,7 +37,7 @@ export class TasksService {
     const result = await this.taskRepository.delete({ id, userId: user.id});
 
     if (result.affected === 0 ) {
-      new NotFoundException('Could not delete unexisting task');
+      throw new NotFoundException('Could not delete unexisting task');
     }
   }
   

@@ -13,7 +13,7 @@ export class UserRepository extends Repository<UserEntity> {
     // cannot compose docker with bcrypt, so commented it just for now
     // const salt = await bcrypt.genSalt();
 
-    const user = new UserEntity();
+    const user = this.create();
     user.username = username;
     user.salt = 'salt';
     // user.password = await this.hashPassword(password, user.salt);
